@@ -61,24 +61,22 @@ def open(i):
                         linesback=2
                         kend=i+width+1
                     if k!=i and buttons[k].opened==0:
-                        print(k)
+                        #print(k)
                         open(k)
                     while k!=kend:
                         if k>=i+(linesforward*width)-1:
                             k=k-(linesback*width)+1
                         else:
                             k=k+width
-                        #print(buttons[k].image)
-                        #print(str(img)+" img")
-                        #print(buttons[k].cget('image')+" cget")
                         if k!=i and buttons[k].opened==0:
-                            print(k)
+                            #print(k)
                             open(k)
                 else:
                     img1_file=Image.open(str(numbers[i])+".png").resize((200, 200))
                 img1=ImageTk.PhotoImage(img1_file)
                 buttons[i].image=img1
                 buttons[i].config(image=img1)
+                buttons[i].config(bg="light grey")
 
 
 
@@ -95,17 +93,18 @@ def open(i):
                 buttons[i].config(image=img1)
                 print("Game Over")
                 end=1
-            buttons[i].config(relief=SUNKEN)
+    buttons[i].config(relief=SUNKEN)
+    print(i)
 
 
 
 
-def printing(event, i):
+def leftClick(event, i):
     global end
     #win=Toplevel(root, bg="white")
     #win.title("Newer Window")
     #win.minsize(width=500, height=250)
-    if not(end):
+    if not(end) and buttons[i].opened==0:
         open(i)
     allopened=1
     for i in buttons:
@@ -115,7 +114,7 @@ def printing(event, i):
         new_game()
         
 
-def printing1(event, i):
+def rightClick(event, i):
     global end
     if not(end):
         if flags[i]==0 and buttons[i].opened==0:
@@ -125,25 +124,29 @@ def printing1(event, i):
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
+            buttons[i].config(bg="light grey")
             flags[i]=1
         elif flags[i]==1:
             buttons[i].opened=1
             flags[i]=2
-            print(flags[i])
-            print(buttons[i].opened)
+            #print(flags[i])
+            #print(buttons[i].opened)
             img1_file=Image.open("question.png").resize((200, 200))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
+            buttons[i].config(bg="light grey")
         elif flags[i]==2:
             buttons[i].opened=0
             flags[i]=0
-            print(flags[i])
-            print(buttons[i].opened)
+            #print(flags[i])
+            #print(buttons[i].opened)
             img1_file=Image.open("blank.png").resize((200, 200))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
+            buttons[i].config(bg="light grey")
+        buttons[i].config(relief=SUNKEN)
     allopened=1
     for i in buttons:
         if i.opened==0:
@@ -156,7 +159,7 @@ def Mines():
     while(i<10):
         j=randint(0, (width*height)-1)
         if mines[j]==0:
-            img2_file=Image.open("mine.png").resize((200, 200))
+            img2_file=Image.open("blank.png").resize((200, 200))
             img2=ImageTk.PhotoImage(img2_file)
             buttons[j].image=img2
             buttons[j].config(image=img2)
@@ -232,15 +235,15 @@ def start_game():
     for i in range(width*height):
         img_file=Image.open("blank.png").resize((200, 200))
         img=ImageTk.PhotoImage(img_file)
-        buttons.append(Button(root, relief=RAISED, image=img, width=200, height=200))
+        buttons.append(Label(root, relief=RAISED, image=img, width=200, height=200))
         mines.append(0)
         numbers.append(0)
         flags.append(0)
         if((i)%width==0 and i!=0):
             by=by+1
             bx=0
-        buttons[i].bind("<Button-1>", lambda event, i1=i: printing(event, i1))
-        buttons[i].bind("<Button-3>", lambda event, i2=i: printing1(event, i2))
+        buttons[i].bind("<Button-1>", lambda event, i1=i: leftClick(event, i1))
+        buttons[i].bind("<Button-3>", lambda event, i2=i: rightClick(event, i2))
         buttons[i].image=img
         buttons[i].place(x=bx*200+bx*15, y=by*200+by*15)
         buttons[i].opened=0
