@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 from PIL import Image, ImageTk
 from random import *
 
@@ -6,9 +7,20 @@ global end
 end=False
 mines=10
 
+def win():
+    allopened=1
+    for i in buttons:
+        if i.opened==0:
+            allopened=0
+    if allopened==1 and flags==mines:
+        if messagebox.askyesno("You Won", "Do you want to start a new game?"):
+            new_game()
+
+
 def open(i):
     global end
     #print("Hello!")
+    buttons[i].config(relief=SUNKEN)
     if(True):
         buttons[i].opened=1
         if flags[i]==0:
@@ -87,13 +99,16 @@ def open(i):
                         img1=ImageTk.PhotoImage(img1_file)
                         buttons[j].image=img1
                         buttons[j].config(image=img1)
+                    elif flags[j]==1:
+                        buttons[j].config(bg="red")
                 img1_file=Image.open("mine1.png").resize((200, 200))
                 img1=ImageTk.PhotoImage(img1_file)
                 buttons[i].image=img1
                 buttons[i].config(image=img1)
                 print("Game Over")
                 end=1
-    buttons[i].config(relief=SUNKEN)
+                if messagebox.askyesno("You Lost", "Do you want to start a new game?"):
+                    new_game()
     print(i)
 
 
@@ -106,12 +121,7 @@ def leftClick(event, i):
     #win.minsize(width=500, height=250)
     if not(end) and buttons[i].opened==0:
         open(i)
-    allopened=1
-    for i in buttons:
-        if i.opened==0:
-            allopened=0
-    if allopened==1 and flags==mines:
-        new_game()
+    win()
         
 
 def rightClick(event, i):
@@ -147,12 +157,7 @@ def rightClick(event, i):
             buttons[i].config(image=img1)
             buttons[i].config(bg="light grey")
         buttons[i].config(relief=SUNKEN)
-    allopened=1
-    for i in buttons:
-        if i.opened==0:
-            allopened=0
-    if allopened==1 and flags==mines:
-        new_game()
+    win()
 
 def Mines():
     i=0
@@ -222,7 +227,8 @@ def Mines():
 
 
 def start_game():
-    global width, height, bx, by, mines, numbers, buttons, flags
+    global width, height, bx, by, mines, numbers, buttons, flags, end
+    end=0
     width=10
     height=10
     by=0
@@ -273,7 +279,7 @@ start_game()
 #button.bind("<Button-3>", printing1)
 #button.place(x=50, y=70)
 
-root.title("New Window")
+root.title("Mines")
 rx=bx*215
 ry=(by+1)*215
 root.geometry(str(rx)+'x'+str(ry))
