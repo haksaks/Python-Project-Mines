@@ -3,7 +3,8 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 from random import *
 
-global end
+global end, difficulty
+difficulty=2
 end=False
 mines=10
 
@@ -26,7 +27,7 @@ def open(i):
         if flags[i]==0:
             if mines[i]==0:
                 if numbers[i]==0:
-                    img1_file=Image.open("blank_open.png").resize((200, 200))
+                    img1_file=Image.open("blank_open.png").resize((buttons_size, buttons_size))
                     if i==0:
                         k=i
                         linesforward=1
@@ -84,7 +85,7 @@ def open(i):
                             #print(k)
                             open(k)
                 else:
-                    img1_file=Image.open(str(numbers[i])+".png").resize((200, 200))
+                    img1_file=Image.open(str(numbers[i])+".png").resize((buttons_size, buttons_size))
                 img1=ImageTk.PhotoImage(img1_file)
                 buttons[i].image=img1
                 buttons[i].config(image=img1)
@@ -95,13 +96,13 @@ def open(i):
             else:
                 for j in range(width*height):
                     if mines[j]==1:
-                        img1_file=Image.open("mine.png").resize((200, 200))
+                        img1_file=Image.open("mine.png").resize((buttons_size, buttons_size))
                         img1=ImageTk.PhotoImage(img1_file)
                         buttons[j].image=img1
                         buttons[j].config(image=img1)
                     elif flags[j]==1:
                         buttons[j].config(bg="red")
-                img1_file=Image.open("mine1.png").resize((200, 200))
+                img1_file=Image.open("mine1.png").resize((buttons_size, buttons_size))
                 img1=ImageTk.PhotoImage(img1_file)
                 buttons[i].image=img1
                 buttons[i].config(image=img1)
@@ -130,7 +131,7 @@ def rightClick(event, i):
         if flags[i]==0 and buttons[i].opened==0:
             buttons[i].opened=1
             print("Bye!")
-            img1_file=Image.open("flag.png").resize((200, 200))
+            img1_file=Image.open("flag.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
@@ -141,7 +142,7 @@ def rightClick(event, i):
             flags[i]=2
             #print(flags[i])
             #print(buttons[i].opened)
-            img1_file=Image.open("question.png").resize((200, 200))
+            img1_file=Image.open("question.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
@@ -151,7 +152,7 @@ def rightClick(event, i):
             flags[i]=0
             #print(flags[i])
             #print(buttons[i].opened)
-            img1_file=Image.open("blank.png").resize((200, 200))
+            img1_file=Image.open("blank.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
             buttons[i].config(image=img1)
@@ -159,12 +160,12 @@ def rightClick(event, i):
         buttons[i].config(relief=SUNKEN)
     win()
 
-def Mines():
+def Mines(mines_count):
     i=0
-    while(i<10):
+    while(i<mines_count):
         j=randint(0, (width*height)-1)
         if mines[j]==0:
-            img2_file=Image.open("blank.png").resize((200, 200))
+            img2_file=Image.open("blank.png").resize((buttons_size, buttons_size))
             img2=ImageTk.PhotoImage(img2_file)
             buttons[j].image=img2
             buttons[j].config(image=img2)
@@ -227,10 +228,10 @@ def Mines():
 
 
 def start_game():
-    global width, height, bx, by, mines, numbers, buttons, flags, end
+    global width, height, bx, by, mines, numbers, buttons, flags, end, buttons_size
     end=0
-    width=10
-    height=10
+    width=difficulty*10
+    height=difficulty*10
     by=0
     bx=0
     buttons=[]
@@ -239,9 +240,10 @@ def start_game():
     flags=[]
     print("Start")
     for i in range(width*height):
-        img_file=Image.open("blank.png").resize((200, 200))
+        buttons_size=200
+        img_file=Image.open("blank.png").resize((buttons_size, buttons_size))
         img=ImageTk.PhotoImage(img_file)
-        buttons.append(Label(root, relief=RAISED, image=img, width=200, height=200))
+        buttons.append(Label(root, relief=RAISED, image=img, width=buttons_size, height=buttons_size))
         mines.append(0)
         numbers.append(0)
         flags.append(0)
@@ -251,10 +253,10 @@ def start_game():
         buttons[i].bind("<Button-1>", lambda event, i1=i: leftClick(event, i1))
         buttons[i].bind("<Button-3>", lambda event, i2=i: rightClick(event, i2))
         buttons[i].image=img
-        buttons[i].place(x=bx*200+bx*15, y=by*200+by*15)
+        buttons[i].place(x=bx*buttons_size+bx*int(buttons_size/10), y=by*buttons_size+by*int(buttons_size/10))
         buttons[i].opened=0
         bx=bx+1
-    Mines()
+    Mines(difficulty*10)
 
 def new_game():
     for i in mines:
@@ -280,8 +282,8 @@ start_game()
 #button.place(x=50, y=70)
 
 root.title("Mines")
-rx=bx*215
-ry=(by+1)*215
+rx=width*(buttons_size+int(buttons_size/10))
+ry=height*(buttons_size+int(buttons_size/10))
 root.geometry(str(rx)+'x'+str(ry))
 
 
