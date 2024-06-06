@@ -1,14 +1,25 @@
 from tkinter import *
 from tkinter import messagebox
+import tkinter.font as tkFont
+from tkinter import font
 from PIL import Image, ImageTk
 from random import *
 
 global end, difficulty
-difficulty=2
+difficulty=1
 end=False
 mines=10
 
-def win():
+def exit():
+    root.destroy()
+
+def change_difficulty(dif):
+    global difficulty
+    difficulty=dif
+    new_game()
+
+
+def win():                                                                 #Win
     allopened=1
     for i in buttons:
         if i.opened==0:
@@ -18,9 +29,8 @@ def win():
             new_game()
 
 
-def open(i):
+def open(i):                                                                #Open a Box
     global end
-    #print("Hello!")
     buttons[i].config(relief=SUNKEN)
     if(True):
         buttons[i].opened=1
@@ -74,7 +84,6 @@ def open(i):
                         linesback=2
                         kend=i+width+1
                     if k!=i and buttons[k].opened==0:
-                        #print(k)
                         open(k)
                     while k!=kend:
                         if k>=i+(linesforward*width)-1:
@@ -82,7 +91,6 @@ def open(i):
                         else:
                             k=k+width
                         if k!=i and buttons[k].opened==0:
-                            #print(k)
                             open(k)
                 else:
                     img1_file=Image.open(str(numbers[i])+".png").resize((buttons_size, buttons_size))
@@ -110,27 +118,22 @@ def open(i):
                 end=1
                 if messagebox.askyesno("You Lost", "Do you want to start a new game?"):
                     new_game()
-    print(i)
 
 
 
 
-def leftClick(event, i):
+def leftClick(event, i):                                                   #Left Click
     global end
-    #win=Toplevel(root, bg="white")
-    #win.title("Newer Window")
-    #win.minsize(width=500, height=250)
     if not(end) and buttons[i].opened==0:
         open(i)
     win()
         
 
-def rightClick(event, i):
+def rightClick(event, i):                                                   #Right Click
     global end
     if not(end):
         if flags[i]==0 and buttons[i].opened==0:
             buttons[i].opened=1
-            print("Bye!")
             img1_file=Image.open("flag.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
@@ -140,8 +143,6 @@ def rightClick(event, i):
         elif flags[i]==1:
             buttons[i].opened=1
             flags[i]=2
-            #print(flags[i])
-            #print(buttons[i].opened)
             img1_file=Image.open("question.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
@@ -150,8 +151,6 @@ def rightClick(event, i):
         elif flags[i]==2:
             buttons[i].opened=0
             flags[i]=0
-            #print(flags[i])
-            #print(buttons[i].opened)
             img1_file=Image.open("blank.png").resize((buttons_size, buttons_size))
             img1=ImageTk.PhotoImage(img1_file)
             buttons[i].image=img1
@@ -160,15 +159,11 @@ def rightClick(event, i):
         buttons[i].config(relief=SUNKEN)
     win()
 
-def Mines(mines_count):
+def Mines(mines_count):                                             #Mines
     i=0
     while(i<mines_count):
         j=randint(0, (width*height)-1)
-        if mines[j]==0:
-            img2_file=Image.open("blank.png").resize((buttons_size, buttons_size))
-            img2=ImageTk.PhotoImage(img2_file)
-            buttons[j].image=img2
-            buttons[j].config(image=img2)
+        if mines[j]==0 and (j<int(width*height/2)+int(width/2)-1 or j>int(width*height/2)+int(width/2)+1):
             mines[j]=1
             i+=1
             if j==0:
@@ -224,23 +219,33 @@ def Mines(mines_count):
                     k=k+width
                 if k!=j and mines[k]==0:
                     numbers[k]+=1
-    print(i)
+    print("Mines: "+str(i))
 
 
-def start_game():
+def start_game():                                                                                                   #Start the game
     global width, height, bx, by, mines, numbers, buttons, flags, end, buttons_size
     end=0
     width=difficulty*10
     height=difficulty*10
     by=0
     bx=0
+    screenWidth=root.winfo_screenwidth()
+    screenHeight=root.winfo_screenheight()
+    buttonsWidth=int((screenWidth-320)/width)
+    buttonsHeight=int((screenHeight-320)/height)
+    if buttonsWidth<buttonsHeight:
+        buttons_size=buttonsWidth
+    else:
+        buttons_size=buttonsHeight
+    rx=width*(buttons_size+int(buttons_size/10))
+    ry=height*(buttons_size+int(buttons_size/10))+20
+    root.geometry(str(rx)+"x"+str(ry))
     buttons=[]
     mines=[]
     numbers=[]
     flags=[]
     print("Start")
     for i in range(width*height):
-        buttons_size=200
         img_file=Image.open("blank.png").resize((buttons_size, buttons_size))
         img=ImageTk.PhotoImage(img_file)
         buttons.append(Label(root, relief=RAISED, image=img, width=buttons_size, height=buttons_size))
@@ -253,15 +258,14 @@ def start_game():
         buttons[i].bind("<Button-1>", lambda event, i1=i: leftClick(event, i1))
         buttons[i].bind("<Button-3>", lambda event, i2=i: rightClick(event, i2))
         buttons[i].image=img
-        buttons[i].place(x=bx*buttons_size+bx*int(buttons_size/10), y=by*buttons_size+by*int(buttons_size/10))
+        buttons[i].place(x=bx*buttons_size+bx*int(buttons_size/10), y=by*buttons_size+by*int(buttons_size/10)+20)
         buttons[i].opened=0
         bx=bx+1
-    Mines(difficulty*10)
+    Mines(difficulty*10+(difficulty-1)*40)
 
-def new_game():
+def new_game():                   #Start new game
     for i in mines:
         i=0
-    print(mines)
     for i in buttons:
         i.destroy()
     start_game()
@@ -272,32 +276,21 @@ root=Tk()
 
 start_game()
 
-#fra=Frame(root, width=500, height=250, bg="lightblue")
-#fra.place(x=300, y=100)
+m=Menu(root)
+fileMenu=Menu(m)
+m.add_cascade(label="File", menu=fileMenu, font=("", 30))
+fileMenu.add_command(label="New Game", command=new_game, font=("", 30))
+fileMenu.add_command(label="Exit", command=exit, font=("", 30))
+settingsMenu=Menu(m)
+m.add_cascade(label="Settings", menu=settingsMenu, font=("", 30))
+difficultyMenu=Menu(settingsMenu)
+settingsMenu.add_cascade(label="Difficulty", menu=difficultyMenu, font=("", 30))
+difficultyMenu.add_command(label="Easy", command=lambda: change_difficulty(1), font=("", 30))
+difficultyMenu.add_command(label="Medium", command=lambda: change_difficulty(2), font=("", 30))
+difficultyMenu.add_command(label="Hard", command=lambda: change_difficulty(3), font=("", 30))
 
-#button=Button(root, width=50, height=25, bg="black", fg="green")
-#button["text"]="Hello!"
-#button.bind("<Button-1>", printing)
-#button.bind("<Button-3>", printing1)
-#button.place(x=50, y=70)
-
+root.config(menu=m)
 root.title("Mines")
-rx=width*(buttons_size+int(buttons_size/10))
-ry=height*(buttons_size+int(buttons_size/10))
-root.geometry(str(rx)+'x'+str(ry))
 
 
-
-#name=Entry(root, width=100)
-#name.place(x=50, y=500)
-#name.bind("#\n", printing)
-#text=Text(root, width=50, bd=10, wrap=WORD, font="Arial 25")
-#text.place(x=500, y=170)
-
-#t=Label(root, text="Mines Game\nFind all mines", font="Arial 32")
-#t.place(x=500, y=70)
-
-
-
-#button.pack()
 root.mainloop()
