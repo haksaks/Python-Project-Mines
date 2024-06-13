@@ -163,7 +163,7 @@ def Mines(mines_count):                                             #Mines
     i=0
     while(i<mines_count):
         j=randint(0, (width*height)-1)
-        if mines[j]==0 and (j<int(width*height/2)+int(width/2)-1 or j>int(width*height/2)+int(width/2)+1):
+        if mines[j]==0:
             mines[j]=1
             i+=1
             if j==0:
@@ -223,7 +223,7 @@ def Mines(mines_count):                                             #Mines
 
 
 def start_game():                                                                                                   #Start the game
-    global width, height, bx, by, mines, numbers, buttons, flags, end, buttons_size
+    global width, height, bx, by, mines, numbers, buttons, flags, end, buttons_size, screenWidth, screenHeight
     end=0
     width=difficulty*10
     height=difficulty*10
@@ -258,7 +258,7 @@ def start_game():                                                               
         buttons[i].bind("<Button-1>", lambda event, i1=i: leftClick(event, i1))
         buttons[i].bind("<Button-3>", lambda event, i2=i: rightClick(event, i2))
         buttons[i].image=img
-        buttons[i].place(x=bx*buttons_size+bx*int(buttons_size/10), y=by*buttons_size+by*int(buttons_size/10)+20)
+        buttons[i].place(x=bx*buttons_size+bx*int(buttons_size/10), y=by*buttons_size+by*int(buttons_size/10)+int(screenWidth/80))
         buttons[i].opened=0
         bx=bx+1
     Mines(difficulty*10+(difficulty-1)*40)
@@ -278,16 +278,16 @@ start_game()
 
 m=Menu(root)
 fileMenu=Menu(m)
-m.add_cascade(label="File", menu=fileMenu, font=("", 30))
-fileMenu.add_command(label="New Game", command=new_game, font=("", 30))
-fileMenu.add_command(label="Exit", command=exit, font=("", 30))
+m.add_cascade(label="File", menu=fileMenu, font=("", int(screenWidth/80)))
+fileMenu.add_command(label="New Game", command=new_game, font=("", int(screenWidth/80)))
+fileMenu.add_command(label="Exit", command=exit, font=("", int(screenWidth/80)))
 settingsMenu=Menu(m)
-m.add_cascade(label="Settings", menu=settingsMenu, font=("", 30))
+m.add_cascade(label="Settings", menu=settingsMenu, font=("", int(screenWidth/80)))
 difficultyMenu=Menu(settingsMenu)
-settingsMenu.add_cascade(label="Difficulty", menu=difficultyMenu, font=("", 30))
-difficultyMenu.add_command(label="Easy", command=lambda: change_difficulty(1), font=("", 30))
-difficultyMenu.add_command(label="Medium", command=lambda: change_difficulty(2), font=("", 30))
-difficultyMenu.add_command(label="Hard", command=lambda: change_difficulty(3), font=("", 30))
+settingsMenu.add_cascade(label="Difficulty", menu=difficultyMenu, font=("", int(screenWidth/80)))
+difficultyMenu.add_command(label="Easy", command=lambda: change_difficulty(1), font=("", int(screenWidth/80)))
+difficultyMenu.add_command(label="Medium", command=lambda: change_difficulty(2), font=("", int(screenWidth/80)))
+difficultyMenu.add_command(label="Hard", command=lambda: change_difficulty(3), font=("", int(screenWidth/80)))
 
 root.config(menu=m)
 root.title("Mines")
