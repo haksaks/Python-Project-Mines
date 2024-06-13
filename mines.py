@@ -8,7 +8,6 @@ from random import *
 global end, difficulty
 difficulty=1
 end=False
-mines=10
 
 def exit():
     root.destroy()
@@ -156,7 +155,9 @@ def rightClick(event, i):                                                   #Rig
             buttons[i].image=img1
             buttons[i].config(image=img1)
             buttons[i].config(bg="light grey")
-        buttons[i].config(relief=SUNKEN)
+            buttons[i].config(relief=RAISED)
+        if buttons[i].opened==1:
+            buttons[i].config(relief=SUNKEN)
     win()
 
 def Mines(mines_count):                                             #Mines
