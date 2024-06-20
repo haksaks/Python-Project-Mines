@@ -19,11 +19,13 @@ def change_difficulty(dif):
 
 
 def win():                                                                 #Win
+    global end
     allopened=1
     for i in buttons:
         if i.opened==0:
             allopened=0
     if allopened==1 and flags==mines:
+        end=True
         if messagebox.askyesno("You Won", "Do you want to start a new game?"):
             new_game()
 
@@ -128,7 +130,7 @@ def leftClick(event, i):                                                   #Left
     win()
         
 
-def rightClick(event, i):                                                   #Right Click
+def rightClick(event, i):                                                  #Right Click
     global end
     if not(end):
         if flags[i]==0 and buttons[i].opened==0:
@@ -225,7 +227,7 @@ def Mines(mines_count):                                             #Mines
 
 def start_game():                                                                                                   #Start the game
     global width, height, bx, by, mines, numbers, buttons, flags, end, buttons_size, screenWidth, screenHeight
-    end=0
+    end=False
     width=difficulty*10
     height=difficulty*10
     by=0
